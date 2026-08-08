@@ -31,9 +31,7 @@ The system automates the complete research workflow—from searching the web and
 
 # 🏗️ System Architecture
 
-```
   ![Architecture](./Architecture.png)
-```
 
 ---
 
