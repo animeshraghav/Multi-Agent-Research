@@ -1,4 +1,14 @@
-# 🤖 Multi-Agent Research System
+<h1 align="center">🤖 Multi-Agent Research System</h1>
+
+<div align="center"> 
+AI-Powered Autonomous Research & Report Generation
+
+<p> <img src="https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white" alt="Python"> <img src="https://img.shields.io/badge/LangChain-1.x-1C3C3C?logo=langchain&logoColor=white" alt="LangChain"> <img src="https://img.shields.io/badge/LangGraph-Agent%20Orchestration-1C3C3C" alt="LangGraph"> <img src="https://img.shields.io/badge/Google%20Gemini-LLM-4285F4?logo=google&logoColor=white" alt="Google Gemini"> </p>
+<p> <img src="https://img.shields.io/badge/Tavily-Web%20Search-000000" alt="Tavily"> <img src="https://img.shields.io/badge/BeautifulSoup-Web%20Scraping-4B8BBE" alt="BeautifulSoup"> <img src="https://img.shields.io/badge/LCEL-Pipeline-FF6F00" alt="LCEL"> <img src="https://img.shields.io/badge/License-MIT-green" alt="License"> </p>
+
+<p> <strong>Search → Read → Write → Critique</strong> </p>
+
+</div>
 
 A modern **AI-powered Multi-Agent Research Assistant** built using **LangGraph**, **LangChain**, **Google Gemini**, **Tavily Search**, **BeautifulSoup**, and **LCEL (LangChain Expression Language)**.
 
@@ -22,8 +32,9 @@ The system automates the complete research workflow—from searching the web and
 # 🏗️ System Architecture
 
 ```
-![Architecture](Architecture.png)
+  ![Architecture](./Architecture.png)
 ```
+
 ---
 
 # 📁 Project Structure
