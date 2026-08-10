@@ -12,17 +12,15 @@ accepts an optional `on_step` callback (fully backward compatible).
 import queue
 import threading
 from datetime import datetime
-
 import streamlit as st
-
 from pipeline.research_pipeline import run_research_pipeline
 
 # ---------------------------------------------------------------------------
 # Page config
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Research Console",
-    page_icon="◆",
+    page_title="Multi Agentic Research",
+    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -341,10 +339,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Static tracker preview (pre-run state)
+# ---------------------------------------------------------------------------
+# Pipeline tracker
+# ---------------------------------------------------------------------------
 tracker_placeholder = st.empty()
+status_placeholder = st.empty()
+progress_placeholder = st.empty()
+
 if not st.session_state.running:
-    tracker_placeholder.markdown(render_tracker({}), unsafe_allow_html=True)
+    tracker_placeholder.markdown(
+        render_tracker({}),
+        unsafe_allow_html=True,
+    )
 
 # ---------------------------------------------------------------------------
 # Input
@@ -375,37 +381,105 @@ if submitted:
 
         q = queue.Queue()
         result_holder = {}
-        thread = threading.Thread(target=_pipeline_worker, args=(topic_clean, q, result_holder))
+
+        thread = threading.Thread(
+            target=_pipeline_worker,
+            args=(topic_clean, q, result_holder),
+            daemon=True,
+        )
+
         thread.start()
 
-        statuses = {s["key"]: "pending" for s in STAGES}
-        tracker_placeholder.markdown(render_tracker(statuses), unsafe_allow_html=True)
+        statuses = {
+            "search": "pending",
+            "read": "pending",
+            "write": "pending",
+            "critique": "pending",
+        }
 
-        with st.spinner("Agents at work — this can take a minute…"):
-            while thread.is_alive() or not q.empty():
-                try:
-                    step, status = q.get(timeout=0.2)
-                except queue.Empty:
-                    continue
-                if step == "__done__":
-                    break
-                statuses[step] = status
-                tracker_placeholder.markdown(render_tracker(statuses), unsafe_allow_html=True)
+        tracker_placeholder.markdown(
+            render_tracker(statuses),
+            unsafe_allow_html=True,
+        )
+
+        status_placeholder.info("Starting research pipeline...")
+        progress = progress_placeholder.progress(0)
+
+        stage_progress = {
+            "search": 25,
+            "read": 50,
+            "write": 75,
+            "critique": 100,
+        }
+
+        stage_labels = {
+            "search": "Search Agent",
+            "read": "Reader Agent",
+            "write": "Writer Chain",
+            "critique": "Critic Chain",
+        }
+
+        while thread.is_alive() or not q.empty():
+            try:
+                step, status = q.get(timeout=0.2)
+            except queue.Empty:
+                continue
+
+            if step == "__done__":
+                break
+
+            if step not in statuses:
+                continue
+
+            statuses[step] = status
+
+            tracker_placeholder.markdown(
+                render_tracker(statuses),
+                unsafe_allow_html=True,
+            )
+
+            if status == "running":
+                status_placeholder.info(
+                    f"Running {stage_labels[step]}..."
+                )
+
+            elif status == "done":
+                progress.progress(stage_progress[step])
+                status_placeholder.success(
+                    f"{stage_labels[step]} completed."
+                )
 
         thread.join()
+
         st.session_state.running = False
 
         if "error" in result_holder:
-            st.error(f"Pipeline failed: {result_holder['error']}")
-        else:
-            st.session_state.history.append({
-                "topic": topic_clean,
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                "state": result_holder["state"],
-            })
-            st.session_state.selected_run = len(st.session_state.history) - 1
-            st.rerun()
+            progress_placeholder.empty()
+            status_placeholder.error(
+                f"Pipeline failed: {result_holder['error']}"
+            )
 
+        else:
+            progress_placeholder.progress(100)
+            status_placeholder.success(
+                "Research pipeline completed successfully."
+            )
+
+            st.session_state.history.append(
+                {
+                    "topic": topic_clean,
+                    "timestamp": datetime.now().strftime(
+                        "%Y-%m-%d %H:%M"
+                    ),
+                    "state": result_holder["state"],
+                }
+            )
+
+            st.session_state.selected_run = (
+                len(st.session_state.history) - 1
+            )
+
+            st.rerun()
 # ---------------------------------------------------------------------------
 # Results
 # ---------------------------------------------------------------------------

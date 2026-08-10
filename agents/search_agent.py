@@ -1,10 +1,12 @@
 from langgraph.prebuilt import create_react_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
+from config import settings
 from tools.search_tools import web_search
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-3.6-flash",
-
+    model=settings.gemini_model,
+    google_api_key=settings.google_api_key,
+    temperature=settings.temperature,
 )
 
 search_agent = create_react_agent(

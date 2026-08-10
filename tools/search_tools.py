@@ -1,31 +1,40 @@
-import os
-from dotenv import load_dotenv
 from tavily import TavilyClient
 from langchain_core.tools import tool
+from config import settings
 
-load_dotenv()
+
+# ============================================================
+# TAVILY CLIENT
+# ============================================================
 
 tavily = TavilyClient(
-    api_key=os.getenv("TAVILY_API_KEY")
+    api_key=settings.tavily_api_key
 )
 
+
+# ============================================================
+# WEB SEARCH TOOL
+# ============================================================
 
 @tool
 def web_search(query: str) -> str:
     """
-    Search the web using Tavily and return the top search results.
+    Search the web using Tavily and return the most relevant
+    search results with titles, URLs, and content snippets.
     """
+
     results = tavily.search(
         query=query,
-        max_results=5
+        max_results= settings.tavily_max_results
     )
-    out = []
-    for r in results["results"]:
-        out.append(
-            f"""Title: {r['title']}
-URL: {r['url']}
-Content: {r['content']}
-"""
+
+    output = []
+
+    for result in results.get("results", []):
+        output.append(
+            f"Title: {result.get('title', 'N/A')}\n"
+            f"URL: {result.get('url', 'N/A')}\n"
+            f"Content: {result.get('content', 'N/A')}"
         )
 
-    return "\n\n".join(out)
+    return "\n\n---\n\n".join(output)

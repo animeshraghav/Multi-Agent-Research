@@ -1,4 +1,4 @@
-<h1 align="center">🤖 Multi-Agent Research System</h1>
+<h1 align="center">🤖 Multi-Agentic Research — v1.0.0</h1>
 
 <div align="center"> 
 AI-Powered Autonomous Research & Report Generation
@@ -29,9 +29,9 @@ The system automates the complete research workflow—from searching the web and
 
 ---
 
-# 🏗️ System Architecture
+## 🏗️ System Architecture
 
-  ![Architecture](./Architecture.png)
+![Multi Agent Research Architecture](Architecture.png)
 
 ---
 
@@ -70,7 +70,7 @@ Multi-Agent-Research/
 ├── config.py
 ├── main.py
 ├── requirements.txt
-├── .env
+├── .env.example
 └── README.md
 ```
 
