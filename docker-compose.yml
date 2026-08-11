@@ -1,0 +1,15 @@
+services:
+  research-assistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: multi-agent-research
+
+    ports:
+      - "8501:8501"
+
+    env_file:
+      - .env
+
+    restart: unless-stopped
